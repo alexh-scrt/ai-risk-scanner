@@ -1,0 +1,1161 @@
+# AI Risk Scanner - Provider Signature Database
+# Version: 1.0.0
+#
+# This file defines known AI providers, their detection patterns,
+# and associated risk metadata used by the detection engine.
+#
+# Schema per provider entry:
+#   id: unique snake_case identifier
+#   name: human-readable display name
+#   category: type of AI service (llm, image_gen, speech, embedding, mlops, cloud_ai)
+#   risk_level: baseline risk level (critical, high, medium, low)
+#   vendor_lock_in: boolean indicating proprietary API lock-in
+#   data_residency_concern: boolean indicating cross-border data transfer risk
+#   patterns:
+#     imports: list of import/require patterns
+#     env_vars: list of environment variable name patterns
+#     urls: list of URL/endpoint patterns
+#     model_names: list of model name patterns
+#     sdk_calls: list of SDK method/class patterns
+#   nist_rmf_functions: list of applicable NIST AI RMF function IDs
+#   ctem_categories: list of applicable CTEM exposure categories
+#   compliance_notes: list of compliance concern strings
+#   docs_url: reference URL for provider documentation
+
+providers:
+
+  - id: openai
+    name: OpenAI
+    category: llm
+    risk_level: high
+    vendor_lock_in: true
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "import openai"
+        - "from openai"
+        - "require('openai')"
+        - "require(\"openai\")"
+        - "from 'openai'"
+        - "from \"openai\""
+      env_vars:
+        - "OPENAI_API_KEY"
+        - "OPENAI_ORG_ID"
+        - "OPENAI_ORGANIZATION"
+        - "OPENAI_BASE_URL"
+        - "OPENAI_API_BASE"
+      urls:
+        - "api.openai.com"
+        - "openai.com/v1"
+      model_names:
+        - "gpt-4o"
+        - "gpt-4-turbo"
+        - "gpt-4"
+        - "gpt-3.5-turbo"
+        - "gpt-3.5"
+        - "o1-preview"
+        - "o1-mini"
+        - "o1"
+        - "o3"
+        - "text-davinci"
+        - "text-embedding-ada"
+        - "text-embedding-3"
+        - "dall-e-3"
+        - "dall-e-2"
+        - "whisper-1"
+        - "tts-1"
+      sdk_calls:
+        - "openai.ChatCompletion"
+        - "openai.Completion"
+        - "openai.Embedding"
+        - "openai.Image"
+        - "openai.Audio"
+        - "client.chat.completions"
+        - "client.completions"
+        - "client.embeddings"
+        - "OpenAI()"
+        - "AsyncOpenAI()"
+    nist_rmf_functions:
+      - "GOVERN-1"
+      - "MAP-1"
+      - "MAP-5"
+      - "MEASURE-2"
+      - "MANAGE-1"
+    ctem_categories:
+      - "external_exposure"
+      - "data_exfiltration"
+      - "third_party_dependency"
+    compliance_notes:
+      - "Data processed by OpenAI may leave your jurisdiction"
+      - "Review OpenAI data retention policies for sensitive workloads"
+      - "Ensure API key rotation policy is in place"
+      - "Audit prompt content for PII/PHI before transmission"
+    docs_url: "https://platform.openai.com/docs"
+
+  - id: anthropic
+    name: Anthropic
+    category: llm
+    risk_level: high
+    vendor_lock_in: true
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "import anthropic"
+        - "from anthropic"
+        - "require('anthropic')"
+        - "require(\"anthropic\")"
+        - "from 'anthropic'"
+        - "from \"@anthropic-ai\""
+      env_vars:
+        - "ANTHROPIC_API_KEY"
+        - "CLAUDE_API_KEY"
+        - "ANTHROPIC_BASE_URL"
+      urls:
+        - "api.anthropic.com"
+        - "anthropic.com/v1"
+      model_names:
+        - "claude-3-5-sonnet"
+        - "claude-3-5-haiku"
+        - "claude-3-opus"
+        - "claude-3-sonnet"
+        - "claude-3-haiku"
+        - "claude-2"
+        - "claude-instant"
+        - "claude-v1"
+      sdk_calls:
+        - "anthropic.Anthropic"
+        - "anthropic.AsyncAnthropic"
+        - "client.messages.create"
+        - "Anthropic()"
+        - "AsyncAnthropic()"
+    nist_rmf_functions:
+      - "GOVERN-1"
+      - "MAP-1"
+      - "MAP-5"
+      - "MEASURE-2"
+      - "MANAGE-1"
+    ctem_categories:
+      - "external_exposure"
+      - "data_exfiltration"
+      - "third_party_dependency"
+    compliance_notes:
+      - "Anthropic processes data on US-based infrastructure"
+      - "Review Constitutional AI constraints for your use case"
+      - "Ensure API key is stored securely and not hardcoded"
+    docs_url: "https://docs.anthropic.com"
+
+  - id: aws_bedrock
+    name: AWS Bedrock
+    category: cloud_ai
+    risk_level: medium
+    vendor_lock_in: true
+    data_residency_concern: false
+    patterns:
+      imports:
+        - "boto3"
+        - "botocore"
+        - "import boto3"
+        - "from boto3"
+        - "@aws-sdk/client-bedrock"
+        - "aws-sdk"
+      env_vars:
+        - "AWS_ACCESS_KEY_ID"
+        - "AWS_SECRET_ACCESS_KEY"
+        - "AWS_SESSION_TOKEN"
+        - "AWS_DEFAULT_REGION"
+        - "BEDROCK_ENDPOINT"
+        - "AWS_BEDROCK_MODEL_ID"
+      urls:
+        - "bedrock.amazonaws.com"
+        - "bedrock-runtime.amazonaws.com"
+        - "bedrock-agent.amazonaws.com"
+      model_names:
+        - "amazon.titan"
+        - "amazon.nova"
+        - "anthropic.claude"
+        - "meta.llama"
+        - "mistral.mistral"
+        - "cohere.command"
+        - "ai21.jamba"
+        - "stability.stable"
+      sdk_calls:
+        - "bedrock-runtime"
+        - "bedrock"
+        - "InvokeModel"
+        - "InvokeModelWithResponseStream"
+        - "Converse"
+        - "ConverseStream"
+    nist_rmf_functions:
+      - "GOVERN-2"
+      - "MAP-3"
+      - "MEASURE-1"
+      - "MANAGE-2"
+    ctem_categories:
+      - "cloud_dependency"
+      - "third_party_dependency"
+      - "identity_access"
+    compliance_notes:
+      - "Data residency depends on selected AWS region"
+      - "Ensure IAM roles follow least-privilege for Bedrock access"
+      - "Review AWS Bedrock data encryption at rest and in transit"
+      - "Audit CloudTrail logs for Bedrock API calls"
+    docs_url: "https://docs.aws.amazon.com/bedrock"
+
+  - id: google_vertex
+    name: Google Vertex AI
+    category: cloud_ai
+    risk_level: medium
+    vendor_lock_in: true
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "from google.cloud import aiplatform"
+        - "import google.cloud.aiplatform"
+        - "from vertexai"
+        - "import vertexai"
+        - "@google-cloud/aiplatform"
+        - "google-cloud-aiplatform"
+        - "from google.generativeai"
+        - "import google.generativeai"
+      env_vars:
+        - "GOOGLE_APPLICATION_CREDENTIALS"
+        - "GOOGLE_CLOUD_PROJECT"
+        - "GOOGLE_CLOUD_REGION"
+        - "VERTEX_AI_ENDPOINT"
+        - "GEMINI_API_KEY"
+        - "GOOGLE_API_KEY"
+      urls:
+        - "aiplatform.googleapis.com"
+        - "generativelanguage.googleapis.com"
+        - "us-central1-aiplatform.googleapis.com"
+        - "vertexai.preview"
+      model_names:
+        - "gemini-1.5-pro"
+        - "gemini-1.5-flash"
+        - "gemini-1.0-pro"
+        - "gemini-pro"
+        - "gemini-ultra"
+        - "text-bison"
+        - "chat-bison"
+        - "codechat-bison"
+        - "embedding-gecko"
+        - "imagegeneration"
+      sdk_calls:
+        - "aiplatform.init"
+        - "GenerativeModel"
+        - "vertexai.init"
+        - "ChatModel.from_pretrained"
+        - "TextGenerationModel"
+        - "genai.GenerativeModel"
+    nist_rmf_functions:
+      - "GOVERN-2"
+      - "MAP-3"
+      - "MEASURE-1"
+      - "MANAGE-2"
+    ctem_categories:
+      - "cloud_dependency"
+      - "external_exposure"
+      - "data_exfiltration"
+    compliance_notes:
+      - "Data may be processed outside EU without explicit region configuration"
+      - "Review Google Cloud data processing addendum"
+      - "Ensure service account has minimal required permissions"
+      - "Audit VPC Service Controls for Vertex AI endpoints"
+    docs_url: "https://cloud.google.com/vertex-ai/docs"
+
+  - id: azure_openai
+    name: Azure OpenAI Service
+    category: cloud_ai
+    risk_level: medium
+    vendor_lock_in: true
+    data_residency_concern: false
+    patterns:
+      imports:
+        - "from openai import AzureOpenAI"
+        - "from openai import AsyncAzureOpenAI"
+        - "AzureOpenAI"
+        - "AsyncAzureOpenAI"
+        - "@azure/openai"
+        - "azure-openai"
+      env_vars:
+        - "AZURE_OPENAI_API_KEY"
+        - "AZURE_OPENAI_ENDPOINT"
+        - "AZURE_OPENAI_DEPLOYMENT_NAME"
+        - "AZURE_OPENAI_API_VERSION"
+        - "AZURE_OPENAI_BASE_URL"
+      urls:
+        - "openai.azure.com"
+        - ".cognitiveservices.azure.com"
+        - "azure.openai.com"
+      model_names:
+        - "gpt-4o"
+        - "gpt-4"
+        - "gpt-35-turbo"
+        - "text-embedding-ada-002"
+        - "dall-e-3"
+      sdk_calls:
+        - "AzureOpenAI("
+        - "AsyncAzureOpenAI("
+        - "azure_endpoint"
+        - "api_version"
+    nist_rmf_functions:
+      - "GOVERN-2"
+      - "MAP-3"
+      - "MEASURE-1"
+      - "MANAGE-2"
+    ctem_categories:
+      - "cloud_dependency"
+      - "identity_access"
+      - "third_party_dependency"
+    compliance_notes:
+      - "Azure OpenAI can be region-locked for data residency compliance"
+      - "Review Microsoft data processing agreement for AI services"
+      - "Ensure Azure AD authentication is preferred over API keys"
+      - "Enable Azure Monitor logging for AI calls"
+    docs_url: "https://learn.microsoft.com/en-us/azure/ai-services/openai"
+
+  - id: huggingface
+    name: Hugging Face
+    category: mlops
+    risk_level: medium
+    vendor_lock_in: false
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "from transformers"
+        - "import transformers"
+        - "from huggingface_hub"
+        - "import huggingface_hub"
+        - "from datasets"
+        - "import datasets"
+        - "from diffusers"
+        - "import diffusers"
+        - "require('@huggingface"
+        - "@huggingface/inference"
+      env_vars:
+        - "HUGGINGFACE_TOKEN"
+        - "HUGGING_FACE_HUB_TOKEN"
+        - "HF_TOKEN"
+        - "HF_API_TOKEN"
+        - "HF_ENDPOINT"
+      urls:
+        - "huggingface.co"
+        - "api-inference.huggingface.co"
+        - "huggingface.co/api"
+      model_names:
+        - "meta-llama"
+        - "mistralai"
+        - "microsoft/phi"
+        - "google/flan"
+        - "facebook/bart"
+        - "bert-base"
+        - "gpt2"
+        - "stabilityai"
+        - "runwayml"
+        - "CompVis"
+      sdk_calls:
+        - "pipeline("
+        - "AutoModelForCausalLM"
+        - "AutoTokenizer"
+        - "InferenceClient"
+        - "HfApi"
+        - "from_pretrained"
+    nist_rmf_functions:
+      - "MAP-1"
+      - "MAP-4"
+      - "MEASURE-2"
+      - "MANAGE-3"
+    ctem_categories:
+      - "open_source_risk"
+      - "supply_chain"
+      - "third_party_dependency"
+    compliance_notes:
+      - "Hugging Face Inference API sends data to third-party servers"
+      - "Self-hosted models reduce data residency risk"
+      - "Review model cards for bias and safety evaluations"
+      - "Audit model provenance and supply chain integrity"
+    docs_url: "https://huggingface.co/docs"
+
+  - id: cohere
+    name: Cohere
+    category: llm
+    risk_level: high
+    vendor_lock_in: true
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "import cohere"
+        - "from cohere"
+        - "require('cohere-ai')"
+        - "require(\"cohere-ai\")"
+        - "cohere-ai"
+      env_vars:
+        - "COHERE_API_KEY"
+        - "CO_API_KEY"
+        - "COHERE_BASE_URL"
+      urls:
+        - "api.cohere.ai"
+        - "api.cohere.com"
+        - "cohere.com/v1"
+      model_names:
+        - "command-r-plus"
+        - "command-r"
+        - "command"
+        - "command-light"
+        - "command-nightly"
+        - "embed-english"
+        - "embed-multilingual"
+        - "rerank-english"
+      sdk_calls:
+        - "cohere.Client"
+        - "cohere.ClientV2"
+        - "co.chat"
+        - "co.generate"
+        - "co.embed"
+        - "co.rerank"
+    nist_rmf_functions:
+      - "GOVERN-1"
+      - "MAP-1"
+      - "MEASURE-2"
+      - "MANAGE-1"
+    ctem_categories:
+      - "external_exposure"
+      - "data_exfiltration"
+      - "third_party_dependency"
+    compliance_notes:
+      - "Cohere processes data in Canada/US by default"
+      - "Review Cohere enterprise data handling for GDPR compliance"
+      - "Ensure API key rotation policy is enforced"
+    docs_url: "https://docs.cohere.com"
+
+  - id: mistral
+    name: Mistral AI
+    category: llm
+    risk_level: high
+    vendor_lock_in: true
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "from mistralai"
+        - "import mistralai"
+        - "require('@mistralai"
+        - "mistral-client"
+        - "mistralai"
+      env_vars:
+        - "MISTRAL_API_KEY"
+        - "MISTRAL_BASE_URL"
+      urls:
+        - "api.mistral.ai"
+        - "mistral.ai/v1"
+      model_names:
+        - "mistral-large"
+        - "mistral-medium"
+        - "mistral-small"
+        - "mistral-tiny"
+        - "open-mistral"
+        - "open-mixtral"
+        - "codestral"
+        - "mistral-embed"
+      sdk_calls:
+        - "MistralClient"
+        - "Mistral("
+        - "client.chat"
+        - "client.embeddings"
+    nist_rmf_functions:
+      - "GOVERN-1"
+      - "MAP-1"
+      - "MEASURE-2"
+    ctem_categories:
+      - "external_exposure"
+      - "data_exfiltration"
+      - "third_party_dependency"
+    compliance_notes:
+      - "Mistral AI is EU-based; review data transfer policies for non-EU deployments"
+      - "Self-hosted Mistral models available for sensitive workloads"
+      - "Audit API key storage and rotation"
+    docs_url: "https://docs.mistral.ai"
+
+  - id: replicate
+    name: Replicate
+    category: mlops
+    risk_level: high
+    vendor_lock_in: false
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "import replicate"
+        - "from replicate"
+        - "require('replicate')"
+        - "require(\"replicate\")"
+      env_vars:
+        - "REPLICATE_API_TOKEN"
+        - "REPLICATE_API_KEY"
+      urls:
+        - "api.replicate.com"
+        - "replicate.com/v1"
+      model_names:
+        - "stability-ai/stable-diffusion"
+        - "meta/llama"
+        - "mistralai/mistral"
+        - "replicate/"
+      sdk_calls:
+        - "replicate.run"
+        - "replicate.predictions"
+        - "replicate.models"
+    nist_rmf_functions:
+      - "MAP-1"
+      - "MAP-4"
+      - "MEASURE-2"
+      - "MANAGE-3"
+    ctem_categories:
+      - "external_exposure"
+      - "data_exfiltration"
+      - "supply_chain"
+    compliance_notes:
+      - "Replicate runs models on shared cloud infrastructure"
+      - "Input data is transmitted to Replicate servers"
+      - "Review model provenance for each used model"
+    docs_url: "https://replicate.com/docs"
+
+  - id: langchain
+    name: LangChain
+    category: llm
+    risk_level: medium
+    vendor_lock_in: false
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "from langchain"
+        - "import langchain"
+        - "from langchain_openai"
+        - "from langchain_anthropic"
+        - "from langchain_google"
+        - "from langchain_aws"
+        - "from langchain_community"
+        - "from langchain_core"
+        - "require('langchain')"
+        - "langchain"
+      env_vars:
+        - "LANGCHAIN_API_KEY"
+        - "LANGCHAIN_TRACING_V2"
+        - "LANGCHAIN_PROJECT"
+        - "LANGSMITH_API_KEY"
+      urls:
+        - "api.smith.langchain.com"
+        - "smith.langchain.com"
+        - "langchain.com"
+      model_names: []
+      sdk_calls:
+        - "ChatOpenAI"
+        - "ChatAnthropic"
+        - "ChatGoogleGenerativeAI"
+        - "LLMChain"
+        - "ConversationChain"
+        - "RetrievalQA"
+        - "AgentExecutor"
+        - "create_react_agent"
+    nist_rmf_functions:
+      - "MAP-1"
+      - "MAP-4"
+      - "MEASURE-2"
+    ctem_categories:
+      - "third_party_dependency"
+      - "supply_chain"
+      - "external_exposure"
+    compliance_notes:
+      - "LangChain orchestrates multiple AI providers; audit each underlying provider"
+      - "LangSmith tracing may send prompt/response data to LangChain servers"
+      - "Review chain configurations for prompt injection vulnerabilities"
+    docs_url: "https://docs.langchain.com"
+
+  - id: llamaindex
+    name: LlamaIndex
+    category: llm
+    risk_level: medium
+    vendor_lock_in: false
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "from llama_index"
+        - "import llama_index"
+        - "from llama_index.core"
+        - "from llama_index.llms"
+        - "from llama_index.embeddings"
+        - "llama-index"
+        - "llamaindex"
+      env_vars:
+        - "LLAMA_CLOUD_API_KEY"
+        - "LLAMA_INDEX_CACHE_DIR"
+      urls:
+        - "api.cloud.llamaindex.ai"
+        - "llamaindex.ai"
+      model_names: []
+      sdk_calls:
+        - "VectorStoreIndex"
+        - "SimpleDirectoryReader"
+        - "ServiceContext"
+        - "StorageContext"
+        - "QueryEngine"
+    nist_rmf_functions:
+      - "MAP-1"
+      - "MAP-4"
+      - "MEASURE-2"
+    ctem_categories:
+      - "third_party_dependency"
+      - "supply_chain"
+    compliance_notes:
+      - "LlamaIndex may index and transmit sensitive document content"
+      - "Audit vector store configurations for data persistence"
+      - "Review LlamaCloud usage if enabled"
+    docs_url: "https://docs.llamaindex.ai"
+
+  - id: openai_whisper
+    name: OpenAI Whisper (Audio)
+    category: speech
+    risk_level: high
+    vendor_lock_in: true
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "import whisper"
+        - "from whisper"
+        - "openai-whisper"
+      env_vars:
+        - "OPENAI_API_KEY"
+      urls:
+        - "api.openai.com/v1/audio"
+      model_names:
+        - "whisper-1"
+        - "whisper-large"
+        - "whisper-medium"
+        - "whisper-small"
+        - "whisper-base"
+        - "whisper-tiny"
+      sdk_calls:
+        - "whisper.load_model"
+        - "whisper.transcribe"
+        - "client.audio.transcriptions"
+        - "client.audio.translations"
+    nist_rmf_functions:
+      - "GOVERN-1"
+      - "MAP-5"
+      - "MEASURE-2"
+    ctem_categories:
+      - "external_exposure"
+      - "data_exfiltration"
+    compliance_notes:
+      - "Audio data transmitted to OpenAI may contain sensitive spoken information"
+      - "Review retention policies for audio transcription services"
+      - "Consider on-premise Whisper deployment for sensitive audio"
+    docs_url: "https://platform.openai.com/docs/guides/speech-to-text"
+
+  - id: stability_ai
+    name: Stability AI
+    category: image_gen
+    risk_level: medium
+    vendor_lock_in: true
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "stability-sdk"
+        - "import stability_sdk"
+        - "from stability_sdk"
+        - "stabilityai"
+      env_vars:
+        - "STABILITY_API_KEY"
+        - "STABILITY_HOST"
+      urls:
+        - "api.stability.ai"
+        - "stability.ai"
+      model_names:
+        - "stable-diffusion-xl"
+        - "stable-diffusion-v1"
+        - "stable-diffusion-v2"
+        - "stable-image"
+        - "sdxl"
+        - "sd3"
+      sdk_calls:
+        - "stability_sdk.client"
+        - "StabilityInference"
+        - "generation.ImageParameters"
+    nist_rmf_functions:
+      - "GOVERN-1"
+      - "MAP-1"
+      - "MEASURE-2"
+    ctem_categories:
+      - "external_exposure"
+      - "data_exfiltration"
+      - "third_party_dependency"
+    compliance_notes:
+      - "Image generation prompts are transmitted to Stability AI servers"
+      - "Review content policy compliance for generated images"
+      - "Audit input image data for privacy concerns"
+    docs_url: "https://platform.stability.ai/docs"
+
+  - id: together_ai
+    name: Together AI
+    category: llm
+    risk_level: high
+    vendor_lock_in: false
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "from together"
+        - "import together"
+        - "togetheri"
+        - "together-python"
+      env_vars:
+        - "TOGETHER_API_KEY"
+        - "TOGETHER_BASE_URL"
+      urls:
+        - "api.together.xyz"
+        - "api.together.ai"
+        - "together.ai"
+      model_names:
+        - "togethercomputer"
+        - "mistralai/Mixtral"
+        - "meta-llama/Llama"
+      sdk_calls:
+        - "Together("
+        - "together.Complete"
+        - "together.Chat"
+    nist_rmf_functions:
+      - "MAP-1"
+      - "MEASURE-2"
+    ctem_categories:
+      - "external_exposure"
+      - "data_exfiltration"
+      - "third_party_dependency"
+    compliance_notes:
+      - "Together AI hosts open-source models on shared infrastructure"
+      - "Audit data transmitted for inference requests"
+    docs_url: "https://docs.together.ai"
+
+  - id: groq
+    name: Groq
+    category: llm
+    risk_level: high
+    vendor_lock_in: false
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "from groq"
+        - "import groq"
+        - "groq-sdk"
+        - "require('groq-sdk')"
+      env_vars:
+        - "GROQ_API_KEY"
+        - "GROQ_BASE_URL"
+      urls:
+        - "api.groq.com"
+        - "groq.com/v1"
+      model_names:
+        - "llama3-8b-8192"
+        - "llama3-70b-8192"
+        - "mixtral-8x7b-32768"
+        - "gemma-7b-it"
+        - "llama-3.1"
+      sdk_calls:
+        - "Groq("
+        - "AsyncGroq("
+        - "groq.chat"
+    nist_rmf_functions:
+      - "MAP-1"
+      - "MEASURE-2"
+    ctem_categories:
+      - "external_exposure"
+      - "data_exfiltration"
+      - "third_party_dependency"
+    compliance_notes:
+      - "Groq uses proprietary LPU hardware; review data handling policies"
+      - "API keys should not be hardcoded in source files"
+    docs_url: "https://console.groq.com/docs"
+
+  - id: perplexity
+    name: Perplexity AI
+    category: llm
+    risk_level: high
+    vendor_lock_in: true
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "perplexity"
+      env_vars:
+        - "PERPLEXITY_API_KEY"
+        - "PPLX_API_KEY"
+      urls:
+        - "api.perplexity.ai"
+        - "perplexity.ai"
+      model_names:
+        - "pplx-7b-online"
+        - "pplx-70b-online"
+        - "pplx-7b-chat"
+        - "pplx-70b-chat"
+        - "llama-3.1-sonar"
+        - "sonar-small"
+        - "sonar-large"
+        - "sonar-huge"
+      sdk_calls:
+        - "perplexity.chat"
+    nist_rmf_functions:
+      - "MAP-1"
+      - "MEASURE-2"
+    ctem_categories:
+      - "external_exposure"
+      - "data_exfiltration"
+      - "third_party_dependency"
+    compliance_notes:
+      - "Perplexity AI performs web searches with your prompts"
+      - "Queries may be logged and used to improve the service"
+    docs_url: "https://docs.perplexity.ai"
+
+  - id: elevenlabs
+    name: ElevenLabs
+    category: speech
+    risk_level: high
+    vendor_lock_in: true
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "from elevenlabs"
+        - "import elevenlabs"
+        - "elevenlabs"
+        - "require('elevenlabs')"
+      env_vars:
+        - "ELEVENLABS_API_KEY"
+        - "XI_API_KEY"
+      urls:
+        - "api.elevenlabs.io"
+        - "elevenlabs.io"
+      model_names:
+        - "eleven_monolingual_v1"
+        - "eleven_multilingual_v2"
+        - "eleven_turbo_v2"
+      sdk_calls:
+        - "generate("
+        - "ElevenLabs("
+        - "Voice("
+        - "clone("
+    nist_rmf_functions:
+      - "GOVERN-1"
+      - "MAP-5"
+      - "MEASURE-2"
+    ctem_categories:
+      - "external_exposure"
+      - "data_exfiltration"
+      - "biometric_data"
+    compliance_notes:
+      - "Voice cloning transmits biometric voice data to ElevenLabs"
+      - "Review GDPR/CCPA implications for voice data processing"
+      - "Ensure consent mechanisms are in place for voice cloning"
+    docs_url: "https://elevenlabs.io/docs"
+
+  - id: pinecone
+    name: Pinecone
+    category: mlops
+    risk_level: medium
+    vendor_lock_in: true
+    data_residency_concern: true
+    patterns:
+      imports:
+        - "from pinecone"
+        - "import pinecone"
+        - "require('pinecone-client')"
+        - "@pinecone-database/pinecone"
+      env_vars:
+        - "PINECONE_API_KEY"
+        - "PINECONE_ENVIRONMENT"
+        - "PINECONE_INDEX"
+      urls:
+        - "pinecone.io"
+        - ".svc.pinecone.io"
+      model_names: []
+      sdk_calls:
+        - "Pinecone("
+        - "pinecone.init"
+        - "pinecone.Index"
+        - "index.upsert"
+        - "index.query"
+    nist_rmf_functions:
+      - "MAP-3"
+      - "MEASURE-1"
+      - "MANAGE-2"
+    ctem_categories:
+      - "cloud_dependency"
+      - "data_exfiltration"
+      - "third_party_dependency"
+    compliance_notes:
+      - "Vector embeddings stored in Pinecone may encode sensitive information"
+      - "Review Pinecone data residency options for compliance"
+      - "Audit what data is being vectorized and stored"
+    docs_url: "https://docs.pinecone.io"
+
+  - id: weaviate
+    name: Weaviate
+    category: mlops
+    risk_level: low
+    vendor_lock_in: false
+    data_residency_concern: false
+    patterns:
+      imports:
+        - "import weaviate"
+        - "from weaviate"
+        - "require('weaviate-client')"
+        - "weaviate-client"
+      env_vars:
+        - "WEAVIATE_URL"
+        - "WEAVIATE_API_KEY"
+        - "WEAVIATE_CLUSTER_URL"
+      urls:
+        - "weaviate.io"
+        - ".weaviate.network"
+        - "weaviate.cloud"
+      model_names: []
+      sdk_calls:
+        - "weaviate.connect_to"
+        - "weaviate.Client"
+        - "client.collections"
+    nist_rmf_functions:
+      - "MAP-3"
+      - "MANAGE-2"
+    ctem_categories:
+      - "cloud_dependency"
+      - "third_party_dependency"
+    compliance_notes:
+      - "Self-hosted Weaviate minimizes data residency risk"
+      - "Weaviate Cloud Services may have different data handling policies"
+    docs_url: "https://weaviate.io/developers/weaviate"
+
+  - id: ollama
+    name: Ollama (Local LLM)
+    category: llm
+    risk_level: low
+    vendor_lock_in: false
+    data_residency_concern: false
+    patterns:
+      imports:
+        - "from ollama"
+        - "import ollama"
+        - "require('ollama')"
+        - "ollama"
+      env_vars:
+        - "OLLAMA_HOST"
+        - "OLLAMA_BASE_URL"
+        - "OLLAMA_API_BASE"
+      urls:
+        - "localhost:11434"
+        - "127.0.0.1:11434"
+        - "ollama.com"
+      model_names:
+        - "llama3"
+        - "llama2"
+        - "mistral"
+        - "codellama"
+        - "phi3"
+        - "qwen"
+        - "gemma"
+        - "deepseek"
+      sdk_calls:
+        - "ollama.chat"
+        - "ollama.generate"
+        - "ollama.embeddings"
+        - "ollama.pull"
+    nist_rmf_functions:
+      - "MAP-1"
+      - "MEASURE-2"
+    ctem_categories:
+      - "supply_chain"
+    compliance_notes:
+      - "Local inference reduces data residency risk"
+      - "Review model weights provenance and supply chain"
+      - "Network exposure risk if Ollama is bound to non-localhost interface"
+    docs_url: "https://ollama.com/docs"
+
+  - id: sagemaker
+    name: AWS SageMaker
+    category: mlops
+    risk_level: medium
+    vendor_lock_in: true
+    data_residency_concern: false
+    patterns:
+      imports:
+        - "import sagemaker"
+        - "from sagemaker"
+        - "sagemaker"
+      env_vars:
+        - "SAGEMAKER_ENDPOINT"
+        - "SAGEMAKER_ENDPOINT_NAME"
+        - "SAGEMAKER_ROLE_ARN"
+        - "SAGEMAKER_REGION"
+      urls:
+        - "sagemaker.amazonaws.com"
+        - ".amazonaws.com/v2/endpoints"
+        - "runtime.sagemaker"
+      model_names:
+        - "jumpstart"
+        - "sagemaker-xgboost"
+        - "sagemaker-sklearn"
+        - "sagemaker-pytorch"
+        - "sagemaker-tensorflow"
+      sdk_calls:
+        - "sagemaker.Session"
+        - "sagemaker.Predictor"
+        - "sagemaker.estimator"
+        - "sagemaker.model"
+        - "runtime_sm_client.invoke_endpoint"
+    nist_rmf_functions:
+      - "GOVERN-2"
+      - "MAP-3"
+      - "MEASURE-1"
+      - "MANAGE-2"
+    ctem_categories:
+      - "cloud_dependency"
+      - "identity_access"
+      - "third_party_dependency"
+    compliance_notes:
+      - "SageMaker data residency is governed by selected AWS region"
+      - "Review IAM execution roles for least-privilege access"
+      - "Audit S3 bucket permissions for training data and model artifacts"
+    docs_url: "https://docs.aws.amazon.com/sagemaker"
+
+  - id: databricks
+    name: Databricks AI (DBRX/MLflow)
+    category: mlops
+    risk_level: medium
+    vendor_lock_in: true
+    data_residency_concern: false
+    patterns:
+      imports:
+        - "import mlflow"
+        - "from mlflow"
+        - "from databricks"
+        - "import databricks"
+        - "databricks-sdk"
+      env_vars:
+        - "DATABRICKS_HOST"
+        - "DATABRICKS_TOKEN"
+        - "DATABRICKS_CLUSTER_ID"
+        - "MLFLOW_TRACKING_URI"
+        - "DATABRICKS_SERVING_ENDPOINT"
+      urls:
+        - ".azuredatabricks.net"
+        - ".databricks.com"
+        - "databricks.com/serving-endpoints"
+      model_names:
+        - "dbrx-instruct"
+        - "databricks-dbrx"
+        - "databricks-llama"
+        - "databricks-mixtral"
+      sdk_calls:
+        - "mlflow.log_metric"
+        - "mlflow.log_artifact"
+        - "mlflow.pyfunc"
+        - "WorkspaceClient"
+        - "mlflow.set_tracking_uri"
+    nist_rmf_functions:
+      - "GOVERN-2"
+      - "MAP-3"
+      - "MEASURE-1"
+      - "MANAGE-3"
+    ctem_categories:
+      - "cloud_dependency"
+      - "identity_access"
+    compliance_notes:
+      - "MLflow tracking server may log sensitive model metadata and artifacts"
+      - "Review Databricks Unity Catalog for data governance"
+      - "Audit cluster access controls and network isolation"
+    docs_url: "https://docs.databricks.com"
+
+# Credential patterns to detect hardcoded secrets (cross-provider)
+credential_patterns:
+  - name: "Generic API Key"
+    pattern: "(?i)(api[_-]?key|apikey)\\s*[=:]\\s*['\"]?([A-Za-z0-9\\-_]{20,})['\"]?"
+    risk_level: critical
+    description: "Hardcoded API key detected"
+  - name: "Bearer Token"
+    pattern: "(?i)bearer\\s+([A-Za-z0-9\\-_.~+/]+=*)"
+    risk_level: critical
+    description: "Hardcoded Bearer token detected"
+  - name: "OpenAI Key Pattern"
+    pattern: "sk-[A-Za-z0-9]{20,}"
+    risk_level: critical
+    description: "Hardcoded OpenAI API key detected"
+  - name: "Anthropic Key Pattern"
+    pattern: "sk-ant-[A-Za-z0-9\\-_]{20,}"
+    risk_level: critical
+    description: "Hardcoded Anthropic API key detected"
+  - name: "HuggingFace Token"
+    pattern: "hf_[A-Za-z0-9]{20,}"
+    risk_level: critical
+    description: "Hardcoded HuggingFace token detected"
+
+# NIST AI RMF function definitions
+nist_rmf_functions:
+  GOVERN-1:
+    name: "Govern: Policies and Accountability"
+    description: "Establish organizational policies, roles, and accountability for AI risk management."
+  GOVERN-2:
+    name: "Govern: Culture and Workforce"
+    description: "Foster organizational culture and workforce readiness for responsible AI."
+  MAP-1:
+    name: "Map: Categorize AI Context"
+    description: "Identify and categorize the AI system's context, purpose, and intended use."
+  MAP-3:
+    name: "Map: AI System Risk Classification"
+    description: "Classify AI system risks based on potential harms and deployment context."
+  MAP-4:
+    name: "Map: Third-Party Dependencies"
+    description: "Identify and assess risks from third-party AI components and supply chain."
+  MAP-5:
+    name: "Map: Potential Harms"
+    description: "Identify potential harms to individuals, groups, or society from AI system outputs."
+  MEASURE-1:
+    name: "Measure: Risk Metrics"
+    description: "Define and collect metrics to evaluate AI risk exposure."
+  MEASURE-2:
+    name: "Measure: Evaluate Trustworthiness"
+    description: "Evaluate AI system trustworthiness characteristics including bias, robustness, and privacy."
+  MANAGE-1:
+    name: "Manage: Risk Treatment"
+    description: "Apply risk treatment strategies including mitigation, transfer, and acceptance."
+  MANAGE-2:
+    name: "Manage: Controls Implementation"
+    description: "Implement technical and governance controls for identified AI risks."
+  MANAGE-3:
+    name: "Manage: Monitor and Review"
+    description: "Continuously monitor AI risks and review effectiveness of controls."
+
+# CTEM exposure category definitions
+ctem_categories:
+  external_exposure:
+    name: "External Exposure"
+    description: "AI service APIs exposed to or called from external networks."
+    severity_modifier: 1.2
+  data_exfiltration:
+    name: "Data Exfiltration Risk"
+    description: "Sensitive data transmitted to third-party AI provider infrastructure."
+    severity_modifier: 1.5
+  third_party_dependency:
+    name: "Third-Party Dependency"
+    description: "Critical dependency on external AI provider availability and reliability."
+    severity_modifier: 1.1
+  cloud_dependency:
+    name: "Cloud Platform Dependency"
+    description: "Dependency on cloud-platform-specific AI services creating lock-in risk."
+    severity_modifier: 1.0
+  supply_chain:
+    name: "AI Supply Chain Risk"
+    description: "Risk from open-source models or components with unclear provenance."
+    severity_modifier: 1.2
+  identity_access:
+    name: "Identity and Access Risk"
+    description: "Inadequate identity and access management for AI service credentials."
+    severity_modifier: 1.3
+  open_source_risk:
+    name: "Open Source Model Risk"
+    description: "Risks associated with open-source AI models including licensing and safety."
+    severity_modifier: 0.9
+  biometric_data:
+    name: "Biometric Data Processing"
+    description: "Processing of biometric data (voice, face, fingerprint) by AI services."
+    severity_modifier: 1.8
